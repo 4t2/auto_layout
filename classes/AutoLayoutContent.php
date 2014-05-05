@@ -36,6 +36,7 @@ class AutoLayoutContent extends \ContentElement
 			return parent::generate();
 		}
 
+		$autoLayoutElements = array();
 		$autoLayoutContent = array();
 		$autoLayoutCount = 0;
 		$autoLayoutPos = 0;
@@ -64,7 +65,6 @@ class AutoLayoutContent extends \ContentElement
 
 		$strBuffer = $autoLayout->layout;
 
-		$autoLayoutElements = array();
 		$intRow = 1;
 
 		while ($objResult->next())
@@ -95,6 +95,7 @@ class AutoLayoutContent extends \ContentElement
 				}
 
 				$strBuffer = preg_replace('#\{\{CE:?:?([^\}:]*)}}#si', $strPlaceholder, $strBuffer, 1, $count);
+
 
 				$cssID = unserialize($objResult->cssID);
 				$headline = unserialize($objResult->headline);
@@ -157,7 +158,7 @@ class AutoLayoutContent extends \ContentElement
 		global $autoLayoutContent, $autoLayoutElements;
 
 		$this->Template->elements = $autoLayoutElements;
-		$this->Template->arrContent = $autoLayoutContent;
+		$this->Template->rows = $autoLayoutContent;
 		$this->Template->content = implode('', $autoLayoutContent);
 	}
 

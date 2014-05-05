@@ -40,9 +40,6 @@ class AutoLayoutHooks extends \Frontend
 					$intRow = $autoLayoutElements[$objElement->id]->row - 1;
 
 					$autoLayoutContent[$intRow] = str_replace('{{AL::'.$objElement->id.'}}', $strBuffer, $autoLayoutContent[$intRow]);
-					$autoLayoutContent[$intRow] = preg_replace('#\{\{ID\}\}#si', $objElement->id, $autoLayoutContent[$intRow], 1);
-					$autoLayoutContent[$intRow] = preg_replace('#\{\{CSS_ID\}\}#si', $cssID[0], $autoLayoutContent[$intRow], 1);
-					$autoLayoutContent[$intRow] = preg_replace('#\{\{CSS_CLASS\}\}#si', $cssID[1], $autoLayoutContent[$intRow], 1);
 
 					if ($autoLayoutCount == 0)
 					{
@@ -63,7 +60,7 @@ class AutoLayoutHooks extends \Frontend
 				}
 				else
 				{
-					$strBuffer = '<div class="ce_text block" style="color:#888;">AutoLayout Element: '.$autoLayout->placeholder[$autoLayoutPos]['label'].'</div>'.$strBuffer;
+					$strBuffer = '<div class="ce_text block" style="color:#888;">### '.$autoLayout->placeholder[$autoLayoutPos]['label'].' ###</div>'.$strBuffer;
 
 					if (!$objElement->autoLayoutSkip)
 					{
