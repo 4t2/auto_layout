@@ -1,9 +1,12 @@
 <div class="<?php echo $this->class; ?> block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
+<p>############ autolayout_simple #############</p>
 
-  <?php if ($this->headline): ?>
-    <<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
-  <?php endif; ?>
+	<?php if ($this->headline): ?>
+		<<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
+	<?php endif; ?>
 
-  <?php echo $this->content; /* will be replaced with placeholder [[AUTOLAYOUT]] */ ?>
+	<?php for ($i = 0; $i < count($this->arrContent); $i++): ?>
+		<?php echo $this->arrContent[$i]; ?>
+	<?php endfor; ?>
 
 </div>

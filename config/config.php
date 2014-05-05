@@ -21,7 +21,8 @@ $GLOBALS['BE_MOD']['design']['auto_layout'] = array
 
 $GLOBALS['TL_CTE']['layout'] = array
 (
-	'auto_layout' => 'AutoLayoutContent'
+	'auto_layout' => 'AutoLayoutContent',
+	'auto_layout_end' => 'AutoLayoutEndContent'
 );
 
 
@@ -29,3 +30,6 @@ $GLOBALS['TL_CTE']['layout'] = array
  * Hooks
  */
 $GLOBALS['TL_HOOKS']['getContentElement'][] = array('AutoLayoutHooks', 'getContentElementHook');
+
+
+$GLOBALS['autoLayoutRender'] = false;

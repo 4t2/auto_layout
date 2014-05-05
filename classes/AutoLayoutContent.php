@@ -18,21 +18,28 @@ if (!defined('TL_ROOT')) die('You can not access this file directly!');
 
 class AutoLayoutContent extends \ContentElement
 {
+	protected $strTemplate = 'autolayout_simple';
 
-	protected $strTemplate = 'autolayout';
-
-	protected $arrElements;
-
-	/**
-	 * Parse the template
-	 * @return string
-	 */
 	public function generate()
 	{
-		global $autoLayout, $autoLayoutContent, $autoLayoutCount;
+		global $autoLayout, $autoLayoutContent, $autoLayoutCount, $autoLayoutPos, $autoLayoutId, $autoLayoutRender, $autoLayoutElements;
 
-		$autoLayoutContent = '';
+		if ($autoLayoutRender && TL_MODE == 'FE')
+		{
+			$autoLayoutRender = false;
+
+			if ($autoLayout->template != '')
+			{
+				$this->strTemplate = $autoLayout->template;
+			}
+
+			return parent::generate();
+		}
+
+		$autoLayoutContent = array();
 		$autoLayoutCount = 0;
+		$autoLayoutPos = 0;
+		$autoLayoutId = $this->id;
 
 		$autoLayout = AutoLayoutModel::findPublishedById($this->autoLayoutSet);
 
@@ -46,34 +53,18 @@ class AutoLayoutContent extends \ContentElement
 			return '';
 		}
 
-		if (TL_MODE == 'BE')
-		{
-			$objTemplate = new \BackendTemplate('be_wildcard');
-
-			$objTemplate->wildcard = '### AUTO GRID ###';
-			$objTemplate->title = $autoLayout->title;
-			$objTemplate->id = $this->id;
-
-			return $objTemplate->parse();
-		}
-
-		if ($autoLayout->template != '')
-		{
-			$this->strTemplate = $autoLayout->template;
-		}
-
 		/**
 		 * Elemente ermitteln
 		 */
 		$objDatabase = \Database::getInstance();
 
-		$objResult = $objDatabase->prepare("SELECT `id`, `type`, `headline`, `autoLayoutSkip`, `cssID`, `invisible`, `start`, `stop` FROM `tl_content` WHERE `pid` = ? AND `sorting` > ?")
+		$objResult = $objDatabase->prepare("SELECT `id`, `type`, `headline`, `autoLayoutSkip`, `cssID`, `invisible`, `start`, `stop` FROM `tl_content` WHERE `pid` = ? AND `sorting` > ? ORDER BY `sorting`")
 			->execute($this->pid, $this->sorting);
 
 
 		$strBuffer = $autoLayout->layout;
 
-		$this->arrElements = array();
+		$autoLayoutElements = array();
 		$intRow = 1;
 
 		while ($objResult->next())
@@ -81,11 +72,12 @@ class AutoLayoutContent extends \ContentElement
 			$blnHiddenElement = $objResult->invisible || ($objResult->start != '' && $objResult->start > time()) || ($objResult->stop != '' && $objResult->stop < time());
 			$blnValidElement = $this->autoLayoutPreserveHidden || !$blnHiddenElement;
 
-			if ($objResult->type == 'auto_layout' || $objResult->type == 'auto_layout_end')
+			if (!$blnHiddenElement && ($objResult->type == 'auto_layout' || $objResult->type == 'auto_layout_end'))
 			{
 				break;
 			}
-			elseif ($blnValidElement)
+
+			if ($blnValidElement && $objResult->type != 'auto_layout' && $objResult->type != 'auto_layout_end')
 			{
 				if ($blnHiddenElement && !\Input::cookie('FE_PREVIEW'))
 				{
@@ -107,11 +99,14 @@ class AutoLayoutContent extends \ContentElement
 				$cssID = unserialize($objResult->cssID);
 				$headline = unserialize($objResult->headline);
 
+				// kein Ergebnis ersetzt, also Spalte zu Ende
 				if ($count == 0)
 				{
 					if ($this->autoLayoutRepeat)
 					{
-						$autoLayoutContent .= str_ireplace('{{ROW}}', $intRow, $strBuffer);
+						$strBuffer = str_ireplace('{{ROW}}', $intRow, $strBuffer);
+						$autoLayoutContent[] = $strBuffer;
+
 						$strBuffer = $autoLayout->layout;
 						$strBuffer = preg_replace('#\{\{CE:?:?([^\}:]*)}}#si', $strPlaceholder, $strBuffer, 1);
 
@@ -119,11 +114,12 @@ class AutoLayoutContent extends \ContentElement
 					}
 					else
 					{
+						$autoLayoutCount--;
 						break;
 					}
 				}
 
-				$this->arrElements[] = (Object)array
+				$autoLayoutElements[$objResult->id] = (Object)array
 				(
 				 	'id'		=> $objResult->id,
 				 	'type'		=> $objResult->type,
@@ -136,20 +132,33 @@ class AutoLayoutContent extends \ContentElement
 		}
 
 		$strBuffer = str_ireplace('{{ROW}}', $intRow, $strBuffer);
-		$autoLayoutContent .= preg_replace('#\{\{CE:?:?([^\}:]*)}}#si', '', $strBuffer);
+		$autoLayoutContent[] = preg_replace('#\{\{CE:?:?([^\}:]*)}}#si', '', $strBuffer);
 
-#die(htmlspecialchars($autoLayoutContent));
+		if (TL_MODE == 'BE')
+		{
+			$objTemplate = new \BackendTemplate('be_wildcard');
 
-		return parent::generate();
+			$objTemplate->wildcard = '### AUTOLAYOUT ### START ###';
+			$objTemplate->title = $autoLayout->title;
+			$objTemplate->id = $this->id;
+
+			return $objTemplate->parse();
+		}
+
+		return '';
 	}
+
 
 	/**
 	 * Generate the content element
 	 */
 	protected function compile()
 	{
-		$this->Template->elements = $this->arrElements;
-		$this->Template->content = '[[AUTOLAYOUT]]';
+		global $autoLayoutContent, $autoLayoutElements;
+
+		$this->Template->elements = $autoLayoutElements;
+		$this->Template->arrContent = $autoLayoutContent;
+		$this->Template->content = implode('', $autoLayoutContent);
 	}
 
 }

@@ -20,31 +20,61 @@ class AutoLayoutHooks extends \Frontend
 {
 	public function getContentElementHook($objElement, $strBuffer)
 	{
-		global $autoLayout, $autoLayoutContent, $autoLayoutCount, $autoLayoutWrapper;
+		global $autoLayout, $autoLayoutContent, $autoLayoutCount, $autoLayoutPos, $autoLayoutRender, $autoLayoutId, $autoLayoutElements;
 
 		if ($objElement->type == 'auto_layout')
 		{
-			$autoLayoutWrapper = $strBuffer;
-			return '';
+			$autoLayoutPos = 0;
+
+			return (TL_MODE == 'BE' ? $strBuffer : '');
 		}
-		elseif ($autoLayoutCount > 0 && isset($autoLayout) && is_object($autoLayout))
+		elseif (isset($autoLayout) && is_object($autoLayout))
 		{
-			$cssID = unserialize($objElement->cssID);
-
-			$autoLayoutContent = str_replace('{{AL::'.$objElement->id.'}}', $strBuffer, $autoLayoutContent);
-			$autoLayoutContent = preg_replace('#\{\{ID\}\}#si', $objElement->id, $autoLayoutContent, 1);
-			$autoLayoutContent = preg_replace('#\{\{CSS_ID\}\}#si', $cssID[0], $autoLayoutContent, 1);
-			$autoLayoutContent = preg_replace('#\{\{CSS_CLASS\}\}#si', $cssID[1], $autoLayoutContent, 1);
-
-			$autoLayoutCount--;
-
-			if ($autoLayoutCount == 0)
+			if ($autoLayoutCount > 0 && isset($autoLayoutElements[$objElement->id]))
 			{
-				$strBuffer = str_replace('[[AUTOLAYOUT]]', $autoLayoutContent, $autoLayoutWrapper).$strBuffer;
-			}
-			else
-			{
-				return '';
+				$autoLayoutCount--;
+
+				if (TL_MODE == 'FE')
+				{
+					$cssID = unserialize($objElement->cssID);
+					$intRow = $autoLayoutElements[$objElement->id]->row - 1;
+
+					$autoLayoutContent[$intRow] = str_replace('{{AL::'.$objElement->id.'}}', $strBuffer, $autoLayoutContent[$intRow]);
+					$autoLayoutContent[$intRow] = preg_replace('#\{\{ID\}\}#si', $objElement->id, $autoLayoutContent[$intRow], 1);
+					$autoLayoutContent[$intRow] = preg_replace('#\{\{CSS_ID\}\}#si', $cssID[0], $autoLayoutContent[$intRow], 1);
+					$autoLayoutContent[$intRow] = preg_replace('#\{\{CSS_CLASS\}\}#si', $cssID[1], $autoLayoutContent[$intRow], 1);
+
+					if ($autoLayoutCount == 0)
+					{
+						$autoLayoutRender = true;
+
+						$objRow = \ContentModel::findByPk($autoLayoutId);
+						$objRow->typePrefix = 'autolayout_';
+
+						$objElement = new AutoLayoutContent($objRow);
+						$strBuffer = $objElement->generate();//.$strBuffer;
+
+						return $strBuffer;
+					}
+					else
+					{
+						return '';
+					}
+				}
+				else
+				{
+					$strBuffer = '<div class="ce_text block" style="color:#888;">AutoLayout Element: '.$autoLayout->placeholder[$autoLayoutPos]['label'].'</div>'.$strBuffer;
+
+					if (!$objElement->autoLayoutSkip)
+					{
+						$autoLayoutPos++;
+
+						if ($autoLayoutPos == count($autoLayout->placeholder))
+						{
+							$autoLayoutPos = 0;
+						}
+					}
+				}
 			}
 		}
 

@@ -52,6 +52,7 @@ foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $key => $palette)
 #$GLOBALS['TL_DCA']['tl_content']['palettes']['__selector__'][] = 'autoLayoutSet';
 $GLOBALS['TL_DCA']['tl_content']['palettes']['auto_layout'] = '{type_legend},type,headline;{layout_legend},autoLayoutSet,autoLayoutRepeat,autoLayoutPreserveHidden;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
+$GLOBALS['TL_DCA']['tl_content']['palettes']['auto_layout_end'] = '{type_legend},type';
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['autoLayoutSet'] = array
 (
