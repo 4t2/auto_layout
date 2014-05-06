@@ -30,7 +30,7 @@ class AutoLayoutHooks extends \Frontend
 		}
 		elseif (isset($autoLayout) && is_object($autoLayout))
 		{
-			if ($autoLayoutCount > 0 && isset($autoLayoutElements[$objElement->id]))
+			if (isset($autoLayoutElements[$objElement->id]))
 			{
 				$autoLayoutCount--;
 
@@ -39,7 +39,7 @@ class AutoLayoutHooks extends \Frontend
 					$cssID = unserialize($objElement->cssID);
 					$intRow = $autoLayoutElements[$objElement->id]->row;
 
-					$autoLayoutElements[$objElement->id]->content = $strBuffer;
+					#$autoLayoutElements[$objElement->id]->content = $strBuffer;
 
 					$autoLayoutContent[$intRow] = str_replace('{{AL::'.$objElement->id.'}}', $strBuffer, $autoLayoutContent[$intRow]);
 

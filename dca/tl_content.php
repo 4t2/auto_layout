@@ -12,6 +12,9 @@
  * @license    http://opensource.org/licenses/lgpl-3.0.html
  */
 
+$GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = array('auto_layout', 'loadCallback');
+
+
 $GLOBALS['TL_DCA']['tl_content']['fields']['autoLayoutSkip'] = array
 (
 	'label'				=> &$GLOBALS['TL_LANG']['tl_content']['autoLayoutSkip'],
@@ -26,31 +29,8 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['autoLayoutSkip'] = array
 );
 
 
-$strPalette = '{auto_layout_legend},autoLayoutSkip';
-
-foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $key => $palette)
-{
-	if (!is_array($palette))
-	{
-		if (strpos($palette, '{expert_legend:hide}') !== FALSE)
-		{
-			$GLOBALS['TL_DCA']['tl_content']['palettes'][$key] = str_replace('{expert_legend:hide}', $strPalette.';{expert_legend:hide}', $palette);
-		}
-		elseif (strpos($palette, '{protected_legend:hide}') !== FALSE)
-		{
-			$GLOBALS['TL_DCA']['tl_content']['palettes'][$key] = str_replace('{protected_legend:hide}', $strPalette.';{protected_legend:hide}', $palette);
-		}
-		else
-		{
-			$GLOBALS['TL_DCA']['tl_content']['palettes'][$key] .= ';'.$strPalette;
-		}
-	}
-}
-
-
-
 #$GLOBALS['TL_DCA']['tl_content']['palettes']['__selector__'][] = 'autoLayoutSet';
-$GLOBALS['TL_DCA']['tl_content']['palettes']['auto_layout'] = '{type_legend},type,headline;{layout_legend},autoLayoutSet,autoLayoutRepeat,autoLayoutPreserveHidden;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
+$GLOBALS['TL_DCA']['tl_content']['palettes']['auto_layout'] = '{type_legend},type,headline;{auto_layout_legend},autoLayoutSet,autoLayoutRepeat,autoLayoutPreserveHidden;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
 $GLOBALS['TL_DCA']['tl_content']['palettes']['auto_layout_end'] = '{type_legend},type';
 
@@ -96,3 +76,33 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['autoLayoutPreserveHidden'] = array
 	'sql'				=> "char(1) NOT NULL default ''"
 );
 
+
+class auto_layout extends \Backend
+{
+	public function loadCallback(\DataContainer $dc)
+	{
+		if (\AutoLayout\AutoLayoutHelper::isAutoLayoutElement($dc->id))
+		{
+			$strPalette = '{auto_layout_legend},autoLayoutSkip';
+
+			foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $key => $palette)
+			{
+				if (!is_array($palette))
+				{
+					if (strpos($palette, '{expert_legend:hide}') !== FALSE)
+					{
+						$GLOBALS['TL_DCA']['tl_content']['palettes'][$key] = str_replace('{expert_legend:hide}', $strPalette.';{expert_legend:hide}', $palette);
+					}
+					elseif (strpos($palette, '{protected_legend:hide}') !== FALSE)
+					{
+						$GLOBALS['TL_DCA']['tl_content']['palettes'][$key] = str_replace('{protected_legend:hide}', $strPalette.';{protected_legend:hide}', $palette);
+					}
+					else
+					{
+						$GLOBALS['TL_DCA']['tl_content']['palettes'][$key] .= ';'.$strPalette;
+					}
+				}
+			}
+		}
+	}
+}

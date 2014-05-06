@@ -114,6 +114,7 @@ class AutoLayoutContent extends \ContentElement
 					else
 					{
 						$autoLayoutCount--;
+
 						break;
 					}
 				}
@@ -125,8 +126,7 @@ class AutoLayoutContent extends \ContentElement
 				 	'headline'	=> $headline['value'],
 				 	'cssID'		=> $cssID[0],
 				 	'cssClass'	=> $cssID[1],
-				 	'row'		=> $intRow,
-				 	'content'	=> ''
+				 	'row'		=> $intRow
 				);
 			}
 		}

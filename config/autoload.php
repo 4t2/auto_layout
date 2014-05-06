@@ -34,6 +34,9 @@ ClassLoader::addClasses(array
 	'AutoLayout\AutoLayoutContent'		=> 'system/modules/auto_layout/classes/AutoLayoutContent.php',
 	'AutoLayout\AutoLayoutEndContent'		=> 'system/modules/auto_layout/classes/AutoLayoutEndContent.php',
 
+	// Helper
+	'AutoLayout\AutoLayoutHelper'		=> 'system/modules/auto_layout/classes/AutoLayoutHelper.php',
+
 	// Hooks
 	'AutoLayout\AutoLayoutHooks'		=> 'system/modules/auto_layout/classes/AutoLayoutHooks.php',
 ));
