@@ -62,10 +62,9 @@ class AutoLayoutContent extends \ContentElement
 		$objResult = $objDatabase->prepare("SELECT `id`, `type`, `headline`, `autoLayoutSkip`, `cssID`, `invisible`, `start`, `stop` FROM `tl_content` WHERE `pid` = ? AND `sorting` > ? ORDER BY `sorting`")
 			->execute($this->pid, $this->sorting);
 
-
 		$strBuffer = $autoLayout->layout;
 
-		$intRow = 1;
+		$intRow = 0;
 
 		while ($objResult->next())
 		{
@@ -96,7 +95,6 @@ class AutoLayoutContent extends \ContentElement
 
 				$strBuffer = preg_replace('#\{\{CE:?:?([^\}:]*)}}#si', $strPlaceholder, $strBuffer, 1, $count);
 
-
 				$cssID = unserialize($objResult->cssID);
 				$headline = unserialize($objResult->headline);
 
@@ -105,7 +103,7 @@ class AutoLayoutContent extends \ContentElement
 				{
 					if ($this->autoLayoutRepeat)
 					{
-						$strBuffer = str_ireplace('{{ROW}}', $intRow, $strBuffer);
+						$strBuffer = str_ireplace('{{ROW}}', $intRow+1, $strBuffer);
 						$autoLayoutContent[] = $strBuffer;
 
 						$strBuffer = $autoLayout->layout;
@@ -127,12 +125,13 @@ class AutoLayoutContent extends \ContentElement
 				 	'headline'	=> $headline['value'],
 				 	'cssID'		=> $cssID[0],
 				 	'cssClass'	=> $cssID[1],
-				 	'row'		=> $intRow
+				 	'row'		=> $intRow,
+				 	'content'	=> ''
 				);
 			}
 		}
 
-		$strBuffer = str_ireplace('{{ROW}}', $intRow, $strBuffer);
+		$strBuffer = str_ireplace('{{ROW}}', $intRow+1, $strBuffer);
 		$autoLayoutContent[] = preg_replace('#\{\{CE:?:?([^\}:]*)}}#si', '', $strBuffer);
 
 		if (TL_MODE == 'BE')
@@ -157,9 +156,21 @@ class AutoLayoutContent extends \ContentElement
 	{
 		global $autoLayoutContent, $autoLayoutElements;
 
-		$this->Template->elements = $autoLayoutElements;
-		$this->Template->rows = $autoLayoutContent;
 		$this->Template->content = implode('', $autoLayoutContent);
+
+		$rowData = array();
+
+		foreach ($autoLayoutContent as $row => $content)
+		{
+			$rowData[$row]['content'] = $content;
+		}
+
+		foreach ($autoLayoutElements as $el)
+		{
+			$rowData[$el->row]['elements'][] = $el;
+		}
+
+		$this->Template->rows = $rowData;
 	}
 
 }

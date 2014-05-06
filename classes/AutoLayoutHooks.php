@@ -37,7 +37,9 @@ class AutoLayoutHooks extends \Frontend
 				if (TL_MODE == 'FE')
 				{
 					$cssID = unserialize($objElement->cssID);
-					$intRow = $autoLayoutElements[$objElement->id]->row - 1;
+					$intRow = $autoLayoutElements[$objElement->id]->row;
+
+					$autoLayoutElements[$objElement->id]->content = $strBuffer;
 
 					$autoLayoutContent[$intRow] = str_replace('{{AL::'.$objElement->id.'}}', $strBuffer, $autoLayoutContent[$intRow]);
 
@@ -49,7 +51,7 @@ class AutoLayoutHooks extends \Frontend
 						$objRow->typePrefix = 'autolayout_';
 
 						$objElement = new AutoLayoutContent($objRow);
-						$strBuffer = $objElement->generate();//.$strBuffer;
+						$strBuffer = $objElement->generate();
 
 						return $strBuffer;
 					}
