@@ -1,0 +1,42 @@
+
+.auto_layout_wrapper
+{
+	margin-left: 5px;
+	padding: 0;
+	border-left: 10px solid #ddd;
+}
+
+.auto_layout_label
+{
+	padding: 2px 10px;
+	color: #444;
+}
+
+.auto_layout_wrapper.start .auto_layout_label,
+.auto_layout_wrapper.end .auto_layout_label,
+.auto_layout_wrapper.break .auto_layout_label
+{
+	background-color: #ddd;
+}
+
+.auto_layout_wrapper.break
+{
+	padding-top: 10px;
+}
+
+.auto_layout_content
+{
+	margin: 0;
+	padding-left: 10px;
+}
+
+.auto_layout_wrapper.start .auto_layout_content
+{
+	padding-top: 10px;
+	padding-bottom: 5px;
+}
+
+.auto_layout_wrapper.end .auto_layout_content
+{
+	padding-top: 10px;
+}

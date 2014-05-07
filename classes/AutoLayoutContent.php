@@ -136,7 +136,14 @@ class AutoLayoutContent extends \ContentElement
 
 		if (TL_MODE == 'BE')
 		{
-			$objTemplate = new \BackendTemplate('be_wildcard');
+			if ($this->invisible)
+			{
+				$objTemplate = new \BackendTemplate('be_wildcard');
+			}
+			else
+			{
+				$objTemplate = new \BackendTemplate('be_autolayout_start');
+			}
 
 			$objTemplate->wildcard = '### AUTOLAYOUT ### START ###';
 			$objTemplate->title = $autoLayout->title;

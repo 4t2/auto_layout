@@ -48,4 +48,6 @@ ClassLoader::addClasses(array
 TemplateLoader::addFiles(array
 (
 	'autolayout_simple' => 'system/modules/auto_layout/templates',
+	'be_autolayout_start' => 'system/modules/auto_layout/templates',
+	'be_autolayout_end' => 'system/modules/auto_layout/templates'
 ));

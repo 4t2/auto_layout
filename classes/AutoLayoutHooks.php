@@ -20,11 +20,12 @@ class AutoLayoutHooks extends \Frontend
 {
 	public function getContentElementHook($objElement, $strBuffer)
 	{
-		global $autoLayout, $autoLayoutContent, $autoLayoutCount, $autoLayoutPos, $autoLayoutRender, $autoLayoutId, $autoLayoutElements;
+		global $autoLayout, $autoLayoutContent, $autoLayoutCount, $autoLayoutPos, $autoLayoutRowPos, $autoLayoutRender, $autoLayoutId, $autoLayoutElements;
 
 		if ($objElement->type == 'auto_layout')
 		{
 			$autoLayoutPos = 0;
+			$autoLayoutRowPos = 1;
 
 			return (TL_MODE == 'BE' ? $strBuffer : '');
 		}
@@ -62,7 +63,12 @@ class AutoLayoutHooks extends \Frontend
 				}
 				else
 				{
-					$strBuffer = '<div class="ce_text block" style="color:#888;">### '.$autoLayout->placeholder[$autoLayoutPos]['label'].' ###</div>'.$strBuffer;
+					$strBuffer = sprintf('<div class="auto_layout_wrapper%s"><div class="auto_layout_label">AutoLayout :: %s [%s]</div><div class="auto_layout_content">%s</div></div>',
+						($autoLayoutPos == 0 && $autoLayoutRowPos > 1 ? ' break' : ''),
+						$autoLayout->placeholder[$autoLayoutPos]['label'],
+						$autoLayoutRowPos,
+						$strBuffer
+					);
 
 					if (!$objElement->autoLayoutSkip)
 					{
@@ -71,6 +77,7 @@ class AutoLayoutHooks extends \Frontend
 						if ($autoLayoutPos == count($autoLayout->placeholder))
 						{
 							$autoLayoutPos = 0;
+							$autoLayoutRowPos++;
 						}
 					}
 				}

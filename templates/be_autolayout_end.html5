@@ -1,0 +1,6 @@
+<div class="auto_layout_wrapper end">
+	<div class="auto_layout_content">
+		<h1><?php echo $this->title; ?></h1>
+	</div>
+	<div class="auto_layout_label"><?php echo $this->wildcard; ?></div>
+</div>

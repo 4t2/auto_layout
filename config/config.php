@@ -31,5 +31,9 @@ $GLOBALS['TL_CTE']['layout'] = array
  */
 $GLOBALS['TL_HOOKS']['getContentElement'][] = array('AutoLayoutHooks', 'getContentElementHook');
 
-
 $GLOBALS['autoLayoutRender'] = false;
+
+if (TL_MODE == 'BE')
+{
+	$GLOBALS['TL_CSS'][] = 'system/modules/auto_layout/assets/css/styles.css';
+}

@@ -22,10 +22,17 @@ class AutoLayoutEndContent extends \ContentElement
 	{
 		if (TL_MODE == 'BE')
 		{
-			$objTemplate = new \BackendTemplate('be_wildcard');
+			if ($this->invisible)
+			{
+				$objTemplate = new \BackendTemplate('be_wildcard');
+			}
+			else
+			{
+				$objTemplate = new \BackendTemplate('be_autolayout_end');
+			}
 
 			$objTemplate->wildcard = '### AUTOLAYOUT ### END ###';
-			$objTemplate->title = $autoLayout->title;
+			$objTemplate->title = $GLOBALS['autoLayout']->title;
 			$objTemplate->id = $this->id;
 
 			return $objTemplate->parse();
