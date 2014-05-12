@@ -20,7 +20,7 @@ class AutoLayoutHooks extends \Frontend
 {
 	public function getContentElementHook($objElement, $strBuffer)
 	{
-		global $autoLayout, $autoLayoutContent, $autoLayoutCount, $autoLayoutPos, $autoLayoutRowPos, $autoLayoutRender, $autoLayoutId, $autoLayoutElements;
+		global $autoLayout, $autoLayoutContent, $autoLayoutCount, $autoLayoutPos, $autoLayoutRowPos, $autoLayoutId, $autoLayoutElements;
 
 		if ($objElement->type == 'auto_layout')
 		{
@@ -46,13 +46,11 @@ class AutoLayoutHooks extends \Frontend
 
 					if ($autoLayoutCount == 0)
 					{
-						$autoLayoutRender = true;
-
 						$objRow = \ContentModel::findByPk($autoLayoutId);
 						$objRow->typePrefix = 'autolayout_';
 
 						$objElement = new AutoLayoutContent($objRow);
-						$strBuffer = $objElement->generate();
+						$strBuffer = $objElement->generateAutoLayout();
 
 						return $strBuffer;
 					}

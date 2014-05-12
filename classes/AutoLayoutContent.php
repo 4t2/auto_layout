@@ -20,21 +20,21 @@ class AutoLayoutContent extends \ContentElement
 {
 	protected $strTemplate = 'autolayout_simple';
 
+	public function generateAutoLayout()
+	{
+		global $autoLayout;
+
+		if ($autoLayout->template != '')
+		{
+			$this->strTemplate = $autoLayout->template;
+		}
+
+		return parent::generate();		
+	}
+
 	public function generate()
 	{
-		global $autoLayout, $autoLayoutContent, $autoLayoutCount, $autoLayoutPos, $autoLayoutId, $autoLayoutRender, $autoLayoutElements;
-
-		if ($autoLayoutRender && TL_MODE == 'FE')
-		{
-			$autoLayoutRender = false;
-
-			if ($autoLayout->template != '')
-			{
-				$this->strTemplate = $autoLayout->template;
-			}
-
-			return parent::generate();
-		}
+		global $autoLayout, $autoLayoutContent, $autoLayoutCount, $autoLayoutPos, $autoLayoutId, $autoLayoutElements;
 
 		$autoLayoutElements = array();
 		$autoLayoutContent = array();
@@ -107,6 +107,8 @@ class AutoLayoutContent extends \ContentElement
 						$autoLayoutContent[] = $strBuffer;
 
 						$strBuffer = $autoLayout->layout;
+
+						$strBuffer = preg_replace('#<!-- AUTOLAYOUT FIXED START -->.*<!-- AUTOLAYOUT FIXED END -->#siU', '', $strBuffer);
 						$strBuffer = preg_replace('#\{\{CE:?:?([^\}:]*)}}#si', $strPlaceholder, $strBuffer, 1);
 
 						$intRow++;
