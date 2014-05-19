@@ -7,7 +7,7 @@
  *
  * @copyright  Lingo4you 2014
  * @author     Mario Müller <http://www.lingolia.com/>
- * @version    1.0.0
+ * @version    1.0.1
  * @package    AutoLayout
  * @license    http://opensource.org/licenses/lgpl-3.0.html
  */
@@ -16,7 +16,7 @@ namespace AutoLayout;
 
 if (!defined('TL_ROOT')) die('You can not access this file directly!');
 
-class AutoLayoutContent extends \ContentElement
+class AutoLayoutStart extends \ContentElement
 {
 	protected $strTemplate = 'autolayout_simple';
 
@@ -71,12 +71,27 @@ class AutoLayoutContent extends \ContentElement
 			$blnHiddenElement = $objResult->invisible || ($objResult->start != '' && $objResult->start > time()) || ($objResult->stop != '' && $objResult->stop < time());
 			$blnValidElement = $this->autoLayoutPreserveHidden || !$blnHiddenElement;
 
-			if (!$blnHiddenElement && ($objResult->type == 'auto_layout' || $objResult->type == 'auto_layout_end'))
+			if (!$blnHiddenElement && ($objResult->type == 'autoLayoutStart' || $objResult->type == 'autoLayoutStop'))
 			{
 				break;
 			}
+			elseif ($blnHiddenElement && $objResult->type == 'autoLayoutSeparator')
+			{
+				continue;
+			}
 
-			if ($blnValidElement && $objResult->type != 'auto_layout' && $objResult->type != 'auto_layout_end')
+			if (!$blnHiddenElement && $objResult->type == 'autoLayoutSeparator')
+			{
+				$strBuffer = str_ireplace('{{ROW}}', $intRow+1, $strBuffer);
+				$autoLayoutContent[] = preg_replace('#\{\{CE:?:?([^\}:]*)}}#si', '', $strBuffer);
+
+				$strBuffer = $autoLayout->layout;
+
+				$strBuffer = preg_replace('#<!-- AUTOLAYOUT FIXED START -->.*<!-- AUTOLAYOUT FIXED END -->#siU', '', $strBuffer);
+
+				$intRow++;
+			}
+			elseif ($blnValidElement && $objResult->type != 'autoLayoutStart' && $objResult->type != 'autoLayoutStop')
 			{
 				if ($blnHiddenElement && !\Input::cookie('FE_PREVIEW'))
 				{
@@ -101,24 +116,15 @@ class AutoLayoutContent extends \ContentElement
 				// kein Ergebnis ersetzt, also Spalte zu Ende
 				if ($count == 0)
 				{
-					if ($this->autoLayoutRepeat)
-					{
-						$strBuffer = str_ireplace('{{ROW}}', $intRow+1, $strBuffer);
-						$autoLayoutContent[] = $strBuffer;
+					$strBuffer = str_ireplace('{{ROW}}', $intRow+1, $strBuffer);
+					$autoLayoutContent[] = $strBuffer;
 
-						$strBuffer = $autoLayout->layout;
+					$strBuffer = $autoLayout->layout;
 
-						$strBuffer = preg_replace('#<!-- AUTOLAYOUT FIXED START -->.*<!-- AUTOLAYOUT FIXED END -->#siU', '', $strBuffer);
-						$strBuffer = preg_replace('#\{\{CE:?:?([^\}:]*)}}#si', $strPlaceholder, $strBuffer, 1);
+					$strBuffer = preg_replace('#<!-- AUTOLAYOUT FIXED START -->.*<!-- AUTOLAYOUT FIXED END -->#siU', '', $strBuffer);
+					$strBuffer = preg_replace('#\{\{CE:?:?([^\}:]*)}}#si', $strPlaceholder, $strBuffer, 1);
 
-						$intRow++;
-					}
-					else
-					{
-						$autoLayoutCount--;
-
-						break;
-					}
+					$intRow++;
 				}
 
 				$autoLayoutElements[$objResult->id] = (Object)array
@@ -138,16 +144,8 @@ class AutoLayoutContent extends \ContentElement
 
 		if (TL_MODE == 'BE')
 		{
-			if ($this->invisible)
-			{
-				$objTemplate = new \BackendTemplate('be_wildcard');
-			}
-			else
-			{
-				$objTemplate = new \BackendTemplate('be_autolayout_start');
-			}
+			$objTemplate = new \BackendTemplate('be_wildcard');
 
-			$objTemplate->wildcard = '### AUTOLAYOUT ### START ###';
 			$objTemplate->title = $autoLayout->title;
 			$objTemplate->id = $this->id;
 

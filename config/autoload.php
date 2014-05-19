@@ -31,8 +31,9 @@ ClassLoader::addClasses(array
 	'AutoLayout\AutoLayoutModel'		=> 'system/modules/auto_layout/models/AutoLayoutModel.php',
 
 	// Elements
-	'AutoLayout\AutoLayoutContent'		=> 'system/modules/auto_layout/classes/AutoLayoutContent.php',
-	'AutoLayout\AutoLayoutEndContent'		=> 'system/modules/auto_layout/classes/AutoLayoutEndContent.php',
+	'AutoLayout\AutoLayoutStart'		=> 'system/modules/auto_layout/classes/AutoLayoutStart.php',
+	'AutoLayout\AutoLayoutSeparator'	=> 'system/modules/auto_layout/classes/AutoLayoutSeparator.php',
+	'AutoLayout\AutoLayoutStop'			=> 'system/modules/auto_layout/classes/AutoLayoutStop.php',
 
 	// Helper
 	'AutoLayout\AutoLayoutHelper'		=> 'system/modules/auto_layout/classes/AutoLayoutHelper.php',
@@ -47,7 +48,5 @@ ClassLoader::addClasses(array
  */
 TemplateLoader::addFiles(array
 (
-	'autolayout_simple' => 'system/modules/auto_layout/templates',
-	'be_autolayout_start' => 'system/modules/auto_layout/templates',
-	'be_autolayout_end' => 'system/modules/auto_layout/templates'
+	'autolayout_simple'			=> 'system/modules/auto_layout/templates'
 ));

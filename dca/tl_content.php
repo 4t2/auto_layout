@@ -7,7 +7,7 @@
  *
  * @copyright  Lingo4you 2014
  * @author     Mario Müller <http://www.lingolia.com/>
- * @version    1.0.0
+ * @version    1.0.1
  * @package    AutoLayout
  * @license    http://opensource.org/licenses/lgpl-3.0.html
  */
@@ -29,10 +29,11 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['autoLayoutSkip'] = array
 );
 
 
-#$GLOBALS['TL_DCA']['tl_content']['palettes']['__selector__'][] = 'autoLayoutSet';
-$GLOBALS['TL_DCA']['tl_content']['palettes']['auto_layout'] = '{type_legend},type,headline;{auto_layout_legend},autoLayoutSet,autoLayoutRepeat,autoLayoutPreserveHidden;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
+$GLOBALS['TL_DCA']['tl_content']['palettes']['autoLayoutStart'] = '{type_legend},type,headline;{auto_layout_legend},autoLayoutSet,autoLayoutPreserveHidden;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
-$GLOBALS['TL_DCA']['tl_content']['palettes']['auto_layout_end'] = '{type_legend},type';
+
+$GLOBALS['TL_DCA']['tl_content']['palettes']['autoLayoutSeparator'] = '{type_legend},type';
+$GLOBALS['TL_DCA']['tl_content']['palettes']['autoLayoutStop'] = '{type_legend},type';
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['autoLayoutSet'] = array
 (
@@ -50,19 +51,6 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['autoLayoutSet'] = array
 	'sql'				=> "int(10) unsigned NOT NULL default '0'"
 );
 
-$GLOBALS['TL_DCA']['tl_content']['fields']['autoLayoutRepeat'] = array
-(
-	'label'				=> &$GLOBALS['TL_LANG']['tl_content']['autoLayoutRepeat'],
-	'exclude'			=> true,
-	'inputType'			=> 'checkbox',
-	'default'			=> '1',
-	'eval'				=> array
-	(
-		'tl_class'		=> 'w50 m12'
-	),
-	'sql'				=> "char(1) NOT NULL default '1'"
-);
-
 $GLOBALS['TL_DCA']['tl_content']['fields']['autoLayoutPreserveHidden'] = array
 (
 	'label'				=> &$GLOBALS['TL_LANG']['tl_content']['autoLayoutPreserveHidden'],
@@ -71,7 +59,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['autoLayoutPreserveHidden'] = array
 	'default'			=> '',
 	'eval'				=> array
 	(
-		'tl_class'		=> 'w50 m12'
+		'tl_class'		=> 'm12'
 	),
 	'sql'				=> "char(1) NOT NULL default ''"
 );

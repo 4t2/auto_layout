@@ -19,12 +19,19 @@ $GLOBALS['BE_MOD']['design']['auto_layout'] = array
     'icon'		=> 'system/modules/auto_layout/assets/icon.png'
 );
 
-$GLOBALS['TL_CTE']['layout'] = array
+$GLOBALS['TL_CTE']['autoLayout'] = array
 (
-	'auto_layout' => 'AutoLayoutContent',
-	'auto_layout_end' => 'AutoLayoutEndContent'
+	'autoLayoutStart'		=> 'AutoLayoutStart',
+	'autoLayoutSeparator'	=> 'AutoLayoutSeparator',
+	'autoLayoutStop'		=> 'AutoLayoutStop'
 );
 
+/**
+ * Wrapper
+ */
+$GLOBALS['TL_WRAPPERS']['start'][]		= 'autoLayoutStart';
+$GLOBALS['TL_WRAPPERS']['separator'][]	= 'autoLayoutSeparator';
+$GLOBALS['TL_WRAPPERS']['stop'][]		= 'autoLayoutStop';
 
 /**
  * Hooks

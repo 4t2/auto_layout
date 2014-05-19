@@ -7,7 +7,7 @@
  *
  * @copyright  Lingo4you 2014
  * @author     Mario Müller <http://www.lingolia.com/>
- * @version    1.0.0
+ * @version    1.0.1
  * @package    AutoLayout
  * @license    http://opensource.org/licenses/lgpl-3.0.html
  */
@@ -20,14 +20,18 @@ class AutoLayoutHooks extends \Frontend
 {
 	public function getContentElementHook($objElement, $strBuffer)
 	{
-		global $autoLayout, $autoLayoutContent, $autoLayoutCount, $autoLayoutPos, $autoLayoutRowPos, $autoLayoutId, $autoLayoutElements;
+		global $autoLayout, $autoLayoutContent, $autoLayoutCount, $autoLayoutPos, $autoLayoutRowPos, $autoLayoutId, $autoLayoutElements, $autoLayoutSeparator;
 
-		if ($objElement->type == 'auto_layout')
+		if ($objElement->type == 'autoLayoutStart')
 		{
 			$autoLayoutPos = 0;
 			$autoLayoutRowPos = 1;
 
 			return (TL_MODE == 'BE' ? $strBuffer : '');
+		}
+		elseif ($objElement->type == 'autoLayoutSeparator')
+		{
+			$autoLayoutSeparator = true;
 		}
 		elseif (isset($autoLayout) && is_object($autoLayout))
 		{
@@ -49,7 +53,7 @@ class AutoLayoutHooks extends \Frontend
 						$objRow = \ContentModel::findByPk($autoLayoutId);
 						$objRow->typePrefix = 'autolayout_';
 
-						$objElement = new AutoLayoutContent($objRow);
+						$objElement = new AutoLayoutStart($objRow);
 						$strBuffer = $objElement->generateAutoLayout();
 
 						return $strBuffer;
@@ -61,12 +65,21 @@ class AutoLayoutHooks extends \Frontend
 				}
 				else
 				{
-					$strBuffer = sprintf('<div class="auto_layout_wrapper%s"><div class="auto_layout_label">AutoLayout :: %s [%s]</div><div class="auto_layout_content">%s</div></div>',
-						($autoLayoutPos == 0 && $autoLayoutRowPos > 1 ? ' break' : ''),
-						$autoLayout->placeholder[$autoLayoutPos]['label'],
-						$autoLayoutRowPos,
-						$strBuffer
-					);
+					$arrLabels = array('<span><strong>AutoLayout</strong></span>');
+
+					$arrLabels[] = sprintf('<span>%s :: %s</span>', $GLOBALS['TL_LANG']['tl_content']['autoLayoutElement'], ($autoLayout->placeholder[$autoLayoutPos]['label'] ?: '#'.($autoLayoutPos+1)));
+
+					if ($objElement->autoLayoutSkip)
+					{
+						$arrLabels[] = ' <span>&radic; '.$GLOBALS['TL_LANG']['tl_content']['autoLayoutSkip'][0].'</span>';
+					}
+
+					if (!$autoLayoutSeparator && $autoLayoutPos == 0 && $autoLayoutRowPos > 1)
+					{
+						$arrLabels[] = ' <span>&crarr; '.$GLOBALS['TL_LANG']['tl_content']['autoLayoutBreak'].'</span>';
+					}
+
+					$strBuffer = '<div class="auto_layout_labels">'.implode(' ', $arrLabels).'</div>'.$strBuffer;
 
 					if (!$objElement->autoLayoutSkip)
 					{
@@ -80,6 +93,8 @@ class AutoLayoutHooks extends \Frontend
 					}
 				}
 			}
+
+			$autoLayoutSeparator = false;
 		}
 
 		return $strBuffer;

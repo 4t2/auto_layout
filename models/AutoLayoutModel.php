@@ -44,7 +44,8 @@ class AutoLayoutModel extends \Model
 					(
 					 	'offset'	=> $match[0][1],
 					 	'length'	=> strlen($match[0][0]),
-					 	'label'		=> trim($match[1][0].' '.$count++.'')
+					 	'label'		=> ($match[1][0] ?: false)
+#					 	'label'		=> trim($match[1][0].' '.$count++.'')
 					);
 
 					$arrPlaceholder[] = $placeholder;
